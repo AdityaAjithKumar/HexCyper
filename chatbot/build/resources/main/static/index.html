@@ -1,0 +1,42 @@
+<!-- index.html -->
+<link rel="stylesheet" type="text/css" href="/style.css">
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat and Image Interface</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+<h1>Chat and Image Interface</h1>
+<form id="form">
+    <label for="prompt">Enter your prompt:</label><br>
+    <input type="text" id="prompt" name="prompt"><br>
+    <label for="type">Select type:</label><br>
+    <select id="type" name="type">
+        <option value="chat">Chat</option>
+        <option value="image">Image</option>
+    </select><br>
+
+    <!-- Add this for model selection -->
+    <div id="model-group">
+        <label for="model">Select model:</label><br>
+        <select id="model" name="model"></select><br>
+    </div>
+
+    <input type="submit" value="Submit">
+</form>
+<p id="response"></p>
+<div id="response-code"></div>
+<button id="copy-button" onclick="copyCodeToClipboard()">Copy to Clipboard</button>
+<img id="responseImage">
+<div id="loading"><img src="loading.gif" alt="Loading..."></div>
+
+<script src="script.js"></script>
+</body>
+
+</html>

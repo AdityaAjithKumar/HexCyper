@@ -1,0 +1,49 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: rgb(24, 24, 24);
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+#form {
+    margin-bottom: 1em;
+}
+
+#loading {
+    display: none;
+}
+
+#response-code {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    display: none;
+}
+
+#copy-button {
+    margin-top: 10px;
+    display: none;
+}
+
+#response {
+    white-space: pre-wrap;
+}
+
+#model-group {
+    display: none;
+}
+/* Add this to your styles.css file */
+
+.code {
+    background-color: #444; /* Background color of the box */
+    color: #fff; /* Text color */
+    padding: 10px; /* Space between the text and the edge of the box */
+    border-radius: 5px; /* Rounded corners */
+}
