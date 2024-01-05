@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat and Image Interface</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(24, 24, 24);
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        #form {
+            margin-bottom: 1em;
+        }
+
+        #loading {
+            display: none;
+        }
+
+        #response-code {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            display: none;
+        }
+
+        #copy-button {
+            margin-top: 10px;
+            display: none;
+        }
+
+        #response {
+            white-space: pre-wrap;
+        }
+
+        #model-group {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Chat and Image Interface</h1>
+<form id="form">
+    <label for="prompt">Enter your prompt:</label><br>
+    <input type="text" id="prompt" name="prompt"><br>
+    <label for="type">Select type:</label><br>
+    <select id="type" name="type">
+        <option value="chat">Chat</option>
+        <option value="image">Image</option>
+    </select><br>
+
+    <!-- Add this for model selection -->
+    <div id="model-group">
+        <label for="model">Select model:</label><br>
+        <select id="model" name="model"></select><br>
+    </div>
+
+    <input type="submit" value="Submit">
+</form>
+<p id="response"></p>
+<div id="response-code"></div>
+<button id="copy-button" onclick="copyCodeToClipboard()">Copy to Clipboard</button>
+<img id="responseImage">
+<div id="loading"><img src="loading.gif" alt="Loading..."></div>
+
+<script>
+    var colorThief = new ColorThief();
+    var img = document.getElementById('responseImage');
+    img.onload = function () {
+        var color = colorThief.getColor(img);
+        img.style.boxShadow = "0 0 25px rgb(" + color + ")";
+    };
+
+    // Models data
+    var textModels = [
+        "gpt-3.5-turbo",
+        "gemini-pro",
+        "gemini-pro-vision",
+        "llama-2-70b-chat",
+        "llama-2-13b-chat",
+        "llama-2-7b-chat",
+        "code-llama-34b",
+        "mistral-7b",
+        "mixtral-8x7b"
+    ];
+
+    var imageModels = [
+        {"id": "sdxl", "name": "SDXL"},
+        {"id": "latent-consistency-model", "name": "Latent Consistency Model"},
+        {"id": "kandinsky-2.2", "name": "Kandinsky 2.2"},
+        {"id": "kandinsky-2", "name": "Kandinsky 2"},
+        {"id": "stable-diffusion-2.1", "name": "Stable Diffusion 2.1"},
+        {"id": "stable-diffusion-1.5", "name": "Stable Diffusion 1.5"},
+        {"id": "deepfloyd-if", "name": "DeepFloyd-IF"},
+        {"id": "material-diffusion", "name": "Material Diffusion"}
+    ];
+
+    // Function to populate model dropdown based on the selected type
+    function populateModels(selectedType) {
+        var modelDropdown = $("#model");
+        modelDropdown.empty(); // Clear existing options
+
+        if (selectedType === "image") {
+            // Populate models based on the selected type
+            imageModels.forEach(function (model) {
+                modelDropdown.append($("<option />").val(model.id).text(model.name));
+            });
+        } else {
+            // Populate text models for chat type
+            textModels.forEach(function (model) {
+                modelDropdown.append($("<option />").val(model).text(model));
+            });
+        }
+
+        $("#model-group").show(); // Always show the model dropdown
+    }
+
+    // Initial population of models based on the default type
+    populateModels($("#type").val());
+
+    // Handle type change event
+    $("#type").change(function () {
+        var selectedType = $(this).val();
+        populateModels(selectedType);
+    });
+
+    $("#form").submit(function (event) {
+        event.preventDefault();
+        $("#loading").show();
+        var prompt = $("#prompt").val();
+        var type = $("#type").val();
+        var model = $("#model").val(); // Get the selected model
+        var url = "https://www.hexcyper.me/" + type;
+
+        // ... (previous code)
+
+        $.ajax({
+            url: url,
+            type: "post",
+            data: {
+                prompt: prompt,
+                model: model
+            },
+            success: function (response) {
+                $("#loading").hide();
+
+                if (type === "chat") {
+                    $("#response").text(response);
+                    $("#response-code").hide();
+                    $("#copy-button").hide();
+                    $("#responseImage").hide();
+                } else if (type === "image") {
+                    // Parse the JSON response
+                    var imageData = JSON.parse(response);
+
+                    // Set the image source based on the URL in the API response
+                    $("#responseImage").attr("src", imageData.data[0].url).show();
+
+                    // Hide other elements
+                    $("#response").text("");
+                    $("#response-code").hide();
+                    $("#copy-button").hide();
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+                $("#loading").hide();
+            }
+        });
+
+        // ... (remaining code)
+    });
+
+    function copyCodeToClipboard() {
+        const codeContainer = document.getElementById('response-code');
+        const range = document.createRange();
+        range.selectNode(codeContainer);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        alert('Code copied to clipboard!');
+    }
+</script>
+
+</body>
+
+</html>
